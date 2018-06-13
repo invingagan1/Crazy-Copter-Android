@@ -25,4 +25,4 @@ var start = function(){
     CrazyCandy.game.state.start('boot');
 }
 document.addEventListener('deviceready', start);
-window.addEventListener('load',start);
+//window.addEventListener('load',start);
