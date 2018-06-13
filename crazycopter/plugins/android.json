@@ -9,7 +9,38 @@
   "installed_plugins": {
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.androidfreakers.crazycopter"
+    },
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "com.androidfreakers.crazycopter"
+    },
+    "cordova-plugin-dialogs": {
+      "PACKAGE_NAME": "com.androidfreakers.crazycopter"
+    },
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.androidfreakers.crazycopter"
+    },
+    "cordova-plugin-media-capture": {
+      "PACKAGE_NAME": "com.androidfreakers.crazycopter"
+    },
+    "cordova-plugin-network-information": {
+      "PACKAGE_NAME": "com.androidfreakers.crazycopter"
+    },
+    "cordova-plugin-screen-orientation": {
+      "PACKAGE_NAME": "com.androidfreakers.crazycopter"
+    },
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "com.androidfreakers.crazycopter"
+    },
+    "cordova-sqlite-storage": {
+      "PACKAGE_NAME": "com.androidfreakers.crazycopter"
+    },
+    "cordova-plugin-vibration": {
+      "PACKAGE_NAME": "com.androidfreakers.crazycopter"
     }
   },
-  "dependent_plugins": {}
+  "dependent_plugins": {
+    "es6-promise-plugin": {
+      "PACKAGE_NAME": "com.androidfreakers.crazycopter"
+    }
+  }
 }

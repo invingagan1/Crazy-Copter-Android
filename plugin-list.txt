@@ -1,0 +1,1 @@
+cordova plugin add cordova-plugin-device cordova-plugin-dialogs cordova-plugin-file cordova-plugin-media-capture cordova-plugin-network-information cordova-plugin-screen-orientation cordova-plugin-splashscreen cordova-plugin-vibration cordova-sqlite-storage phonegap-facebook-plugin
