@@ -18,15 +18,22 @@ var sqlite_test = {
         });
         $('#get_player').click(function(){
             // Get player
-            storage.getPlayer().then(console.log).catch(console.error);
+            storage.getPlayer().then(function(data){
+                alert(JSON.stringify(data))
+            }).catch(function(e){
+                alert(e.toString());
+            });
         });
         $('#get_score').click(function(){
             // get scores
-            storage.getScores().then(console.log).catch(console.error);
+            storage.getScores().then(function(data){
+                alert(JSON.stringify(data))
+            }).catch(console.error);
         });
     }
 }
 document.addEventListener("deviceready", function() {
-    storage.init();
+    //storage.init();
+    alert(JSON.stringify(storage))
     sqlite_test.init();
 });
