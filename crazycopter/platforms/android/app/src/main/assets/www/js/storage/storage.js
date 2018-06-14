@@ -6,13 +6,41 @@ var storage = {
     isAvailable: false,
     tablesCreated: false,
     isPlayerCreated: false,
+    db: null,
 
     init: function() {
-        console.log('Init storage');
+        this.createDatabase();
     },
-    createDatabase: function(){},
-    createTables: function()(),
-    
+    createDatabase: function(){
+        this.db = window.sqlitePlugin.openDatabase({
+                name: this.storageName,
+                location: "default"
+        }, (function () {
+            this.isAvailable = true;
+            this.createTables();
+        }).bind(this),(function () {
+            this.isAvailable = false;
+        }).bind(this));
+    },
+    createTables: function(){
+        if (this.isAvailable) {
+            db.transaction(function (tx) {
+                tx.executeSql(`CREATE TABLE IF NOT EXISTS ${playerTable} (name text, facebookId text, id text primary key, score integer, time text)`);
+                tx.executeSql(`CREATE TABLE IF NOT EXISTS ${scoreTable} (score integer, time text)`);
+            }, function (error) {
+                storage.tablesCreated = false;
+            }, function () {
+                storage.tablesCreated = true;
+            });
+        }
+    },
+
+    createPlayer: function(){},
+    updatePlayer: function(){},
+    getPlayer: function(){},
+
+    addScore: function() {},
+    getScores: function(){}
 
 }
 //var storageName = 'crazycopter';
