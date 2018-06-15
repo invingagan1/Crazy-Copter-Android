@@ -1,120 +1,236 @@
 var storage = {
-
-    storageName: 'crazycopter',
+    databaseName: 'crazycopter.db',
     playerTable: 'player',
-    scoreTable: 'scores',
-    isAvailable: false,
-    tablesCreated: false,
-    isPlayerCreated: false,
+    scoreTable: 'score',
+
     db: null,
 
-    init: function() {
-        alert('init storage');
-        this.createDatabase();
+    isDatabaseExist: function () {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            if (that.db === null) {
+                resolve(false);
+            } else {
+                resolve(true);
+            }
+        });
     },
-    createDatabase: function(){
-        this.db = window.sqlitePlugin.openDatabase({
-                name: this.storageName,
+    openDatabase: function () {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            that.db = window.sqlitePlugin.openDatabase({
+                name: that.databaseName,
                 location: "default"
-        }, (function () {
-            this.isAvailable = true;
-            alert('database created');
-            this.createTables();
-        }).bind(this),(function () {
-            alert('database not created');
-            this.isAvailable = false;
-        }).bind(this));
-    },
-    createTables: function(){
-        if (this.isAvailable) {
-            this.db.transaction(function (tx) {
-                tx.executeSql(`CREATE TABLE IF NOT EXISTS ${playerTable} (name text, facebookId text, id text primary key, score integer, time text)`);
-                tx.executeSql(`CREATE TABLE IF NOT EXISTS ${scoreTable} (score integer, time text)`);
-            }, (function (error) {
-                alert('database created');
-                this.tablesCreated = false;
-            }).bind(this), (function () {
-                this.tablesCreated = true;
-            }).bind(this));
-        }
-    },
-
-    createPlayer: function(player) {
-        if (this.db.isAvailable && this.db.tablesCreated) {
-            this.db.transaction(function (tx) {
-                tx.executeSql(
-                    `INSERT INTO ${playerTable} VALUES (?,?,?,?,?)`,
-                    [player.name, player.facebookId, player.id, player.latestScore.score, player.latestScore.time]
-                );
-            }, (function (error) {
-                this.isPlayerCreated = false;
-            }).bond(this), (function () {
-                this.isPlayerCreated = true;
-            }).bind(this));
-        }
-    },
-    updatePlayer: function(player){
-        if (this.db.isAvailable && this.db.tablesCreated) {
-            this.db.transaction(function (tx) {
-                tx.executeSql(
-                    `UPDATE ${playerTable} SET name = ?, facebookId = ? ,score = ?, time = ? where id = ?`,
-                    [player.name, player.facebookId, player.latestScore.score, player.latestScore.time, player.id]
-                )
-            }, function (error) {
-                console.error(error);
             }, function () {
-                console.log('player updated');
+                resolve(true);
+            }, function (e) {
+                reject(e);
             });
-        }
-    },
-    getPlayer: function(){
-        var self = this;
-        return new Promise(function (resolve, reject) {
-            if (self.db.isAvailable && self.db.tablesCreated) {
-                self.db.transaction(function (tx) {
-                    tx.executeSql(`SELECT * FROM ${playerTable}`, [], function (resultSet) {
-                        // TODO: convert result set into player objects
-                        alert('get player');
-                        resolve(resultSet);
-                    }, function (error) {
-                        reject('No information available');
-                    });
-                });
-            } else {
-                reject('No information available');
-            }
         });
     },
 
-    addScore: function(player, score) {
-        if (this.db.isAvailable && this.db.tablesCreated) {
-            this.db.transaction(function (tx) {
-                tx.executeSql(`INSERT INTO ${scoreTable} VALUE (?,?)`, [score.score, score.time]);
-                tx.executeSql(`UPDATE ${playerTable} SET score = ?, time = ? where id = ?`, [score.score, score.time, player.id])
-            }, function (error) {
-                console.error(error);
-            }, function () {
-                console.log('score added.');
-            });
-        }
-    },
-    getScores: function(){
-        var self = this;
+
+    isTableExist: function (table) {
+        var that = this;
         return new Promise(function (resolve, reject) {
-            if (self.db.isAvailable && self.db.tablesCreated) {
-                self.db.transaction(function (tx) {
-                    tx.executeSql(`SELECT * FROM ${scoreTable}`, [], function (resultSet) {
-                        // TODO: convert result set into score objects
-                        resolve(resultSet);
-                    }, function (error) {
-                        reject('No information available');
-                    });
+            that.db.transaction(function (tx) {
+                var query = `SELECT COUNT(*) AS tableCount FROM sqlite_master WHERE TYPE = "table" AND NAME = ?`;
+                tx.executeSql(query, [table], function (tx, rs) {
+                    resolve(rs.rows.item(0).tableCount > 0);
+                }, function (e) {
+                    reject(e);
                 });
-            } else {
-                reject('No information available');
-            }
+            });
         });
-    };
+    },
+    createPlayerTable: function () {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            that.db.transaction(function (tx) {
+                var query = `CREATE TABLE IF NOT EXISTS ${that.playerTable} (name text, facebookId text, id text primary key, score integer, time text)`;
+                tx.executeSql(query, [], function () {
+                    resolve(true);
+                }, reject);
+            });
+        });
+    },
+
+    createPlayer: function (player) {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            that.db.transaction(function (tx) {
+                var query = `INSERT INTO ${that.playerTable} VALUES (?,?,?,?,?)`;
+                var values = [player.name, player.facebookId, player.id, player.latestScore.score, player.latestScore.time];
+                tx.executeSql(query, values, function () {
+                    resolve(true);
+                }, reject);
+            });
+        });
+    },
+    updatePlayer: function (player) {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            that.db.transaction(function (tx) {
+                var query = `UPDATE ${that.playerTable} SET name=?, facebookId = ?, score = ?, time = ? WHERE id = ?`;
+                var values = [player.name, player.facebookId, player.latestScore.score, player.latestScore.time, player.id];
+                tx.executeSql(query, values, function () {
+                    resolve(true);
+                }, reject);
+            });
+        });
+    },
+    getPlayer: function () {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            that.db.transaction(function (tx) {
+                var query = `SELECT * FROM ${that.playerTable} `;
+                tx.executeSql(query, [], function (tx, rs) {
+                    var players = [];
+                    for (var i = 0; i < rs.rows.length; i++) {
+                        var rowItem = rs.rows.item(0);
+                        players.push(new Player(
+                            rowItem.name,
+                            rowItem.facebookId,
+                            rowItem.id,
+                            rowItem.score,
+                            rowItem.time
+                        ));
+                    }
+                    resolve(players);
+                }, function (e) {
+                    reject(e);
+                });
+            });
+        });
     }
+};
 
-}
+
+
+
+
+//var storage = {
+//
+//    storageName: 'crazycopter',
+//    playerTable: 'player',
+//    scoreTable: 'scores',
+//    isAvailable: false,
+//    tablesCreated: false,
+//    isPlayerCreated: false,
+//    db: null,
+//
+//    init: function() {
+//        this.createDatabase();
+//    },
+//    createDatabase: function(){
+//        this.db = window.sqlitePlugin.openDatabase({
+//                name: this.storageName,
+//                location: "default"
+//        }, (function () {
+//            this.isAvailable = true;
+//            this.createTables();
+//        }).bind(this),(function () {
+//            this.isAvailable = false;
+//        }).bind(this));
+//    },
+//    createTables: function(){
+//        var self = this;
+//        if(this.isAvailable){
+//            this.db.transaction(function (tx) {
+//                tx.executeSql(`CREATE TABLE IF NOT EXISTS ${self.playerTable} (name text, facebookId text, id text primary key, score integer, time text)`);
+//                tx.executeSql(`CREATE TABLE IF NOT EXISTS ${self.scoreTable} (score integer, time text)`);
+//            }, (function (error) {
+//                this.tablesCreated = false;
+//            }).bind(this), (function () {
+//                this.tablesCreated = true;
+//            }).bind(this));
+//        }
+//    },
+//
+//    createPlayer: function(player) {
+//        var self = this;
+//        if (this.isAvailable && this.tablesCreated && this.db) {
+//            var query = `INSERT INTO ${self.playerTable} VALUES (?,?,?,?,?)`;
+//            alert(query);
+//            this.db.transaction(function (tx) {
+//                tx.executeSql(
+//                    query,
+//                    [player.name, player.facebookId, player.id, player.latestScore.score, player.latestScore.time]
+//                );
+//            }, (function (error) {
+//                this.isPlayerCreated = false;
+//                alert('could not create player');
+//            }).bind(this), (function () {
+//                this.isPlayerCreated = true;
+//                alert('player created');
+//            }).bind(this));
+//        }
+//    },
+//    updatePlayer: function(player){
+//        var self = this;
+//        if (this.isAvailable && this.tablesCreated && this.db) {
+//            this.db.transaction(function (tx) {
+//                var query = `UPDATE ${self.playerTable} SET name = ?, facebookId = ? ,score = ?, time = ? where id = ?`;
+//                tx.executeSql(
+//                    query,
+//                    [player.name, player.facebookId, player.latestScore.score, player.latestScore.time, player.id]
+//                )
+//            }, function (error) {
+//                alert('could not update player');
+//                console.error(error);
+//            }, function () {
+//                alert('player updated');
+//                console.log('player updated');
+//            });
+//        }
+//    },
+//    getPlayer: function(){
+//        var self = this;
+//        return new Promise(function (resolve, reject) {
+//            if (self.isAvailable && self.tablesCreated && self.db) {
+//                self.db.transaction(function (tx) {
+//                    tx.executeSql(`SELECT * FROM ${self.playerTable}`, [], function (resultSet) {
+//                        // TODO: convert result set into player objects
+//                        alert(`isAvailable ${self.isAvailable} tablesCreated ${self.tablesCreated} table ${self.playerTable} `);
+//                        resolve(resultSet.rows);
+//                    }, function (error) {
+//                        reject('No information available - 1');
+//                    });
+//                });
+//            } else {
+//                reject('No information available - 2');
+//            }
+//        });
+//    },
+//
+//    addScore: function(player, score) {
+//        var self = this;
+//        if (this.isAvailable && this.tablesCreated && this.db) {
+//            this.db.transaction(function (tx) {
+//                tx.executeSql(`INSERT INTO ${self.scoreTable} VALUE (?,?)`, [score.score, score.time]);
+//                tx.executeSql(`UPDATE ${self.playerTable} SET score = ?, time = ? where id = ?`, [score.score, score.time, player.id])
+//            }, function (error) {
+//                console.error(error);
+//            }, function () {
+//                console.log('score added.');
+//            });
+//        }
+//    },
+//    getScores: function(){
+//        var self = this;
+//        return new Promise(function (resolve, reject) {
+//            if (self.isAvailable && self.tablesCreated && self.db) {
+//                self.db.transaction(function (tx) {
+//                    tx.executeSql(`SELECT * FROM ${self.scoreTable}`, [], function (resultSet) {
+//                        // TODO: convert result set into score objects
+//                        resolve(resultSet);
+//                    }, function (error) {
+//                        reject('No information available');
+//                    });
+//                });
+//            } else {
+//                reject('No information available');
+//            }
+//        });
+//    }
+//}
