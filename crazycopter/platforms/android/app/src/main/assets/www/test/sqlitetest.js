@@ -51,46 +51,42 @@ var sqlite_test = {
         }
 
         function errorFunction(e) {
-            console.error(e);
+            alert('Error: ' + JSON.stringify(e));
         }
 
-        storage.openDatabase().then(function (r) {
-            // testUpdatePlayer();
-            storage.getPlayer().then(function (result) {
-                alert(JSON.stringify(result));
-                console.log(JSON.stringify(result.latestScore));
-            }).catch(errorFunction);
+        // storage.openDatabase().then(function (r) {
+        //     // testUpdatePlayer();
+        //     storage.getPlayer().then(function (result) {
+        //         alert(JSON.stringify(result));
+        //         console.log(JSON.stringify(result.latestScore));
+        //     }).catch(errorFunction);
+        // }).catch(errorFunction);
+
+        // Test is player table exist
+        storage.isTableExist(storage.scoreTable).then(function (result) {
+            alert(result ? 'Table exists' : 'Table does not exist');
         }).catch(errorFunction);
 
-        //        $('#save_player').click(function(){
-        //            // save player
-        //            var name = $("#name").val();
-        //            var time = new  Date();
-        //            sqlite_test.player = new Player(name,'12','',-1, Date.now());
-        //            storage.createPlayer(sqlite_test.player);
-        //        });
-        //        $('#save_score').click(function(){
-        //            // save player
-        //            var score = $("#score").val();
-        //            var latestScore = new ScoreData(score, Date.now());
-        //            sqlite_test.player.latestScore = latestScore;
-        //            storage.updatePlayer(sqlite_test.player);
-        //            storage.addScore(latestScore);
-        //        });
-        //        $('#get_player').click(function(){
-        //            // Get player
-        //            storage.getPlayer().then(function(data){
-        //                alert(JSON.stringify(data))
-        //            }).catch(function(e){
-        //                alert(e.toString());
-        //            });
-        //        });
-        //        $('#get_score').click(function(){
-        //            // get scores
-        //            storage.getScores().then(function(data){
-        //                alert(JSON.stringify(data))
-        //            }).catch(console.error);
-        //        });
+        // test create Table
+        storage
+            .openDatabase()
+            .then(storage.createScoreTable)
+            .then(function () { alert('Score table created') })
+            .catch(errorFunction);
+
+        // Test add score
+        storage
+            .openDatabase()
+            .then(function(){return storage.addScore(newScore)})
+            .then(function(){alert('Score added to table')})
+            .catch(errorFunction);
+
+        // get scores
+        storage
+            .openDatabase()
+            .then(function(){return storage.getScores();})
+            .then(function(result){alert(JSON.stringify(result))})
+            .catch(errorFunction);
     }
 }
 document.addEventListener("deviceready", function () {
