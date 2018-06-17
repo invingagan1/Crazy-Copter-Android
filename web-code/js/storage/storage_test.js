@@ -105,3 +105,16 @@ var sqlite_test = {
 // document.addEventListener("deviceready", function () {
 //     sqlite_test.init();
 // });
+
+var localStorageTest = {
+    init: function(){
+        console.log('localstorage test');
+        player = new Player("Gagan","f-123", 12, new Date());
+        this.testSavePlayer();
+    },
+    testSavePlayer: function(player){
+        storageHandler.savePlayer(player).then(console.log).catch(console.error);
+    }
+}
+
+window.onload = localStorageTest.init();

@@ -24,3 +24,11 @@ var start = function(){
     
     CrazyCandy.game.state.start('boot');
 }
+
+//To decide the load event
+if(utils.isNativeApplication()){
+    // document.addEventListener('deviceready', start);
+}else{
+    // $(document).ready(start);
+}
+

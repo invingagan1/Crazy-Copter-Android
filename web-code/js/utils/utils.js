@@ -7,5 +7,16 @@ var utils = {
     },
     isMobileDevice: function(){
         return (/Mobi|Android/i.test(navigator.userAgent));
+    },
+    isNativeApplication: function(){
+        //It will check the cordova device ready event. if it exists then then native else browser.
+        var eventName = "deviceready";
+        var isNative =  false;
+        for(item in window.document){
+            if(item === 'on'+eventName){
+                isNative = true
+            }
+        }
+        return isNative;
     }
 }

@@ -162,3 +162,30 @@ var storage = {
         });
     }
 };
+
+var storageHandler = {
+    storage: {
+        player: {},
+        score: []
+    },
+
+    savePlayer: function (player) {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            that.storage.player = player;
+            try {
+                console.log(player)
+                window.localStorage.setItem('storage', JSON.stringify(that.storage));
+                resolve()
+            } catch (e) {
+                reject(e)
+            }
+
+        });
+    },
+    updatePlayer: function (player) { },
+    getPlayer: function () { },
+
+    addScore: function (scoreData) { },
+    getScores: function () { }
+}
