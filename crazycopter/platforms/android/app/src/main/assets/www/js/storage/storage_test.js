@@ -63,18 +63,30 @@ var sqlite_test = {
         // }).catch(errorFunction);
 
         // Test is player table exist
-        storage.isTableExist(storage.scoreTable).then(function (result) {
-            alert(result ? 'Table exists' : 'Table does not exist');
-        }).catch(errorFunction);
+
+        // storage
+        //     .openDatabase()
+        //     .then(function(){
+        //         return storage.isTableExist(storage.scoreTable)
+        //     })
+        //     .then(function(result){
+        //         alert(result? 'Table exist' : 'Table does not exist');
+        //     })
+        //     .catch(errorFunction);
 
         // test create Table
-        storage
-            .openDatabase()
-            .then(storage.createScoreTable)
-            .then(function () { alert('Score table created') })
-            .catch(errorFunction);
+        // storage
+        //     .openDatabase()
+        //     .then(function(){
+        //         storage.createScoreTable().then(function(){alert('table created')}).catch(errorFunction);
+        //     })
+        //     .then(function(){
+        //         alert('table created');
+        //     })
+        //     .catch(errorFunction);
 
         // Test add score
+        
         storage
             .openDatabase()
             .then(function(){return storage.addScore(newScore)})
@@ -82,13 +94,14 @@ var sqlite_test = {
             .catch(errorFunction);
 
         // get scores
-        storage
-            .openDatabase()
-            .then(function(){return storage.getScores();})
-            .then(function(result){alert(JSON.stringify(result))})
-            .catch(errorFunction);
+
+        // storage
+        //     .openDatabase()
+        //     .then(function(){return storage.getScores();})
+        //     .then(function(result){alert(JSON.stringify(result))})
+        //     .catch(errorFunction);
     }
 }
-document.addEventListener("deviceready", function () {
-    sqlite_test.init();
-});
+// document.addEventListener("deviceready", function () {
+//     sqlite_test.init();
+// });

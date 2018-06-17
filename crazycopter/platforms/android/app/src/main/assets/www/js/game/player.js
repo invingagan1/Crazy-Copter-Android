@@ -1,26 +1,16 @@
-var Player = function (name, id, facebookId, score, time) {
+var Player = function (name, facebookId, score, time) {
     this.name = name;
-    this.id = id;
+    this.id = utils.createId();
     this.facebookId = facebookId;
     this.latestScore = {
-        score:0,
-        time: (new Date()).getTime()
+        score: 0,
+        time: new Date()
     };
     this.latestScore.score = score;
-    this.latestScore.time = (new Date(time)).getTime();
-};
-Player.prototype = {
-    name: "",
-    facebookId: "",
-    id: "",
-    latestScore: {}
+    this.latestScore.time = new Date(time);
 };
 
 var ScoreData = function (score, time) {
     this.score = score;
-    this.time = (new Date(time)).getTime();
-}
-ScoreData.prototype = {
-    score: 0,
-    time: ''
+    this.time = new Date(time);
 }
