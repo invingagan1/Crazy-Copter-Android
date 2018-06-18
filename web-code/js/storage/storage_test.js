@@ -86,11 +86,15 @@ var sqlite_test = {
         //     .catch(errorFunction);
 
         // Test add score
-        
+
         storage
             .openDatabase()
-            .then(function(){return storage.addScore(newScore)})
-            .then(function(){alert('Score added to table')})
+            .then(function () {
+                return storage.addScore(newScore)
+            })
+            .then(function () {
+                alert('Score added to table')
+            })
             .catch(errorFunction);
 
         // get scores
@@ -107,14 +111,34 @@ var sqlite_test = {
 // });
 
 var localStorageTest = {
-    init: function(){
+    init: function () {
         console.log('localstorage test');
-        player = new Player("Gagan","f-123", 12, new Date());
-        this.testSavePlayer();
+        var player = new Player("Gagan", "f-123", 12, new Date());
+        // this.testSavePlayer(player);
+        player.latestScore.score = 123;
+        player.latestScore.time = new Date();
+        // this.testUpdatePlayer(player);
+        // this.testGetPlayer();
+
+        var scoreData = new ScoreData(12, new Date());
+        //this.testAddScore(scoreData);
+        this.testGetScore();
     },
-    testSavePlayer: function(player){
+    testSavePlayer: function (player) {
         storageHandler.savePlayer(player).then(console.log).catch(console.error);
+    },
+    testUpdatePlayer: function (player) {
+        storageHandler.updatePlayer(player).then(console.log).catch(console.error);
+    },
+    testGetPlayer: function () {
+        storageHandler.getPlayer().then(console.log).catch(console.error);
+    },
+    testAddScore: function (scoreData) {
+        storageHandler.addScore(scoreData).then(console.log).catch(console.error);
+    },
+    testGetScore: function () {
+        storageHandler.getScores().then(console.log).catch(console.error);
     }
-}
+};
 
 window.onload = localStorageTest.init();

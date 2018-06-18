@@ -36,7 +36,7 @@ var storage = {
         var that = this;
         return new Promise(function (resolve, reject) {
             if (that.db === null) {
-                resole(true);
+                resolve(true);
             } else {
                 that.db.close(function () {
                     that.db = null;
@@ -168,24 +168,84 @@ var storageHandler = {
         player: {},
         score: []
     },
-
+    storageName: 'crazycopter',
     savePlayer: function (player) {
         var that = this;
         return new Promise(function (resolve, reject) {
-            that.storage.player = player;
-            try {
-                console.log(player)
-                window.localStorage.setItem('storage', JSON.stringify(that.storage));
-                resolve()
-            } catch (e) {
-                reject(e)
+            if (player === undefined || player === null) {
+                reject('player is not defined');
+            } else {
+                try {
+                    that.storage.player = player;
+                    window.localStorage.setItem(that.storageName, JSON.stringify(that.storage));
+                    resolve();
+                } catch (e) {
+                    reject(e);
+                }
             }
-
         });
     },
-    updatePlayer: function (player) { },
-    getPlayer: function () { },
+    updatePlayer: function (player) {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            if (player === undefined || player === null) {
+                reject('player is not defined');
+            } else {
+                try {
+                    that.storage.player = player;
+                    window.localStorage.setItem(that.storageName, JSON.stringify(that.storage));
+                    resolve();
+                } catch (e) {
+                    reject(e);
+                }
+            }
+        });
+    },
+    getPlayer: function () {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            try {
+                var players = [];
+                var localData = JSON.parse(window.localStorage.getItem(that.storageName));
+                that.storage.player = localData.player;
+                var p = new Player(that.storage.player.name, that.storage.player.facebookId, that.storage.player.latestScore.score, that.storage.player.latestScore.time);
+                p.id = that.storage.player.id;
+                players.push(p);
+                resolve(players);
+            } catch (e) {
+                reject(e);
+            }
+        });
+    },
 
-    addScore: function (scoreData) { },
-    getScores: function () { }
-}
+    addScore: function (scoreData) {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            if (scoreData === undefined || scoreData === null) {
+                reject('score data is not defined');
+            } else {
+                try {
+                    that.storage.score.push(scoreData);
+                    window.localStorage.setItem(that.storageName, JSON.stringify(that.storage));
+                    resolve();
+                } catch (e) {
+                    reject(e);
+                }
+            }
+        });
+    },
+    getScores: function () {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            try {
+                var localData = JSON.parse(window.localStorage.getItem(that.storageName));
+                that.storage.score = localData.score.map(function (data) {
+                    return new ScoreData(data.score, new Date(data.time));
+                });
+                resolve(that.storage.score);
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
+};
