@@ -1,6 +1,6 @@
 var CrazyCandy = CrazyCandy || {};
 
-var start = function(){
+var start = function () {
 
     // var height = window.innerHeight;
     // var width = window.innerWidth;
@@ -14,21 +14,20 @@ var start = function(){
         3. Selection: It will have selection options of game.
         4. Game: It will have game logic
      */
-    
+
     CrazyCandy.game.state.add('boot', CrazyCandy.Boot);
     CrazyCandy.game.state.add('preload', CrazyCandy.Preload);
     CrazyCandy.game.state.add('register', CrazyCandy.Register);
     CrazyCandy.game.state.add('selection', CrazyCandy.Selection);
     CrazyCandy.game.state.add('game', CrazyCandy.Game);
     CrazyCandy.game.state.add('game-over', CrazyCandy.GameOver);
-    
+
     CrazyCandy.game.state.start('boot');
 }
 
 //To decide the load event
-if(utils.isNativeApplication()){
-    // document.addEventListener('deviceready', start);
-}else{
-    // $(document).ready(start);
+if (utils.isNativeApplication()) {
+    document.addEventListener('deviceready', start);
+} else {
+    $(document).ready(start);
 }
-
