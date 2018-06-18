@@ -27,7 +27,7 @@ var start = function () {
 
 //To decide the load event
 if (utils.isNativeApplication()) {
-    document.addEventListener('deviceready', start);
+    // document.addEventListener('deviceready', start);
 } else {
-    $(document).ready(start);
+    // $(document).ready(start);
 }
