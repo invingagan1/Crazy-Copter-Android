@@ -70,6 +70,21 @@ var facebookHandler = {
             }
 
         });
+    },
+    postOnWall: function () {
+
+    },
+    shareWithFriends: function () {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            FB.ui({
+                method:'apprequests',
+                message:'awesom gae'
+            }, function () {
+
+            });
+        });
+
     }
 };
 
@@ -78,7 +93,8 @@ var testFacebookHandler = {
         facebookHandler.init();
         // this.testIsLoggedIn();
         // this.testLogin();
-        this.testUserInfo();
+        // this.testUserInfo();
+        this.testShareWithFriends();
     },
 
     testIsLoggedIn: function () {
@@ -90,11 +106,14 @@ var testFacebookHandler = {
     },
     testUserInfo: function () {
         facebookHandler.isLoggedIn().then(function (status) {
-            if (loginEnum.connected === status) {
-                facebookHandler.getUserInfo().then(console.log).catch(console.error);
+            if (status === loginEnum.connected) {
+                facebookHandler.getUserInfo().then(console.log).catch(console.error)
             }
-        }).catch(console.error);
-        // facebookHandler.getUserInfo().then(console.log).catch(console.error);
+        }).catch(console.error)
+    },
+    testShareWithFriends: function(){
+        facebookHandler.shareWithFriends().then(console.log).catch(console.error);
     }
 };
-window.onload = testFacebookHandler.start();
+
+// window.onload = testFacebookHandler.start();

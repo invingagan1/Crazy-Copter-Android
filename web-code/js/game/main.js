@@ -21,13 +21,18 @@ var start = function () {
     CrazyCandy.game.state.add('selection', CrazyCandy.Selection);
     CrazyCandy.game.state.add('game', CrazyCandy.Game);
     CrazyCandy.game.state.add('game-over', CrazyCandy.GameOver);
+    CrazyCandy.game.state.add('settings', CrazyCandy.Settings);
+
+    // init Global Values
+    CrazyCandy.isMute = false;
+    facebookHandler.init();
 
     CrazyCandy.game.state.start('boot');
 }
 
 //To decide the load event
 if (utils.isNativeApplication()) {
-    // document.addEventListener('deviceready', start);
+    document.addEventListener('deviceready', start);
 } else {
-    // $(document).ready(start);
+    $(document).ready(start);
 }
